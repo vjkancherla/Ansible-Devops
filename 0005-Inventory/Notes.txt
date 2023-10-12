@@ -1,0 +1,49 @@
+====
+Docker hosts
+====
+
+[1] Run the docker image as described in 0000-DockerImage/Notes.txt
+
+
+[2] The hosts.ini inventory file is defined as:
+=====
+[K3D]
+localhost:2222
+ubuntu-docker.127.0.0.1.nip.io:2222
+=====
+
+    - [K3D] is the name of a group of instances to manage
+    - We then define each instance for [K3D] group
+        - localhost:2222
+        - ubuntu-docker.127.0.0.1.nip.io:2222
+        Both refer to the same server. The second hostname goes to the internet and the connects to localhost
+
+
+Some ad-hoc commands to run:
+
+
+>> ansible -i hosts.ini K3D -m ping -u testuser
+
+>> ansible -i hosts.ini K3D -a "free -h" -u testuser
+
+=======
+
+====
+Kubernetes hosts
+====
+>> k create -f ubuntu-deployment.yaml
+
+>> k port-forward svc/ubuntu-svc-1 2222:2222
+
+>> k port-forward svc/ubuntu-svc-2 2322:2222
+
+pod-hosts.ini
+====
+[K3D]
+ubuntu-pod-1.127.0.0.1.nip.io:2222
+ubuntu-pod-2.127.0.0.1.nip.io:2322
+====
+
+>> ANSIBLE_HOST_KEY_CHECKING=False ansible -i pods-hosts.ini K3D -m ping -u testuser
+
+>> ANSIBLE_HOST_KEY_CHECKING=False ansible -i pods-hosts.ini K3D -a "free -h" -u testuser

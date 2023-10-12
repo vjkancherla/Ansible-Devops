@@ -1,0 +1,18 @@
+
+====
+Kubernetes hosts
+====
+>> k create -f ubuntu-deployment.yaml
+
+>> k port-forward svc/ubuntu-svc-1 2222:2222
+
+>> k port-forward svc/ubuntu-svc-2 2322:2222
+
+pod-hosts.ini
+====
+[K3D]
+ubuntu-pod-1.127.0.0.1.nip.io:2222
+ubuntu-pod-2.127.0.0.1.nip.io:2322
+====
+
+>> ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i pods-hosts.ini -u testuser playbook.yaml

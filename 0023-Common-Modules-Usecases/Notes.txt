@@ -1,0 +1,59 @@
+[1] Manage users and groups
+    - Ansible’s user and group modules make things pretty simple and standard across any Linux flavor.
+
+    - Add an admin group on the app servers for the server administrators
+        >> ansible app -b -m group -a "name=admin state=present"
+
+    - Add the user johndoe to the app servers with the group just created and give him a home folder in /home/johndoe 
+        >> ansible app -b -m user -a "name=johndoe group=admin createhome=yes"
+
+    - Delete a user
+        >> ansible app -b -m user -a "name=johndoe state=absent remove=yes"
+
+
+[2] Manage packages
+    - We’ve already used the "apt module on our example to ensure certain packages are installed. 
+    - Ansible has a variety of package management modules for any flavor of Linux, but there’s also a 
+      generic "package "module that can be used for easier cross-platform Ansible usage.
+
+    - If you want to install a generic package like git on any Debian, RHEL, Fedora, Ubuntu, CentOS, FreeBSD, etc. system, 
+      you can use the command:
+        >> ansible app -b -m package -a "name=git state=present"
+
+
+[3] Manage files and directories
+    - Get information about a file
+        >> ansible multi -m stat -a "path=/etc/environment"
+
+    - Copy a file to the servers
+        >> ansible multi -m copy -a "src=/etc/hosts dest=/tmp/hosts"
+
+    - Retrieve a file from the servers
+        >> ansible multi -b -m fetch -a "src=/etc/hosts dest=/tmp"
+
+    - Create directories and files
+        >> Create Dir: ansible multi -m file -a "dest=/tmp/test mode=644 state=directory"
+
+        >> Delete Dir: ansible multi -m file -a "dest=/tmp/test state=absent"
+
+[4] Check log files
+    - View the last few lines of the messages log file on each of our servers:
+        >> ansible multi -b -a "tail /var/log/messages"
+
+    - Filter the messages log with something like grep:
+        >> ansible multi -b -m shell -a "tail /var/log/messages | grep ansible-command | wc -l"
+
+
+[5] Getting code from GitHub
+    - Checkout code from a repo
+        >> ansible app -b -m git -a "repo=git://example.com/path/to/repo.git dest=/opt/myapp update=yes version=1.2.4"
+
+    Ansible’s git module lets you specify a branch, tag, or even a specific commit with the version parameter
+     (in this case, we chose to checkout tag 1.2.4, but if you run the command again with a branch name, like prod, 
+     Ansible will happily do that instead). 
+
+     Note: If you get a message saying “Failed to find required executable git”, you will need to install Git on the server. 
+     To do so, run the ad-hoc command ansible app -b -m package -a "name=git state=present".
+
+     Note: If you get a message saying the Git server has an “unknown hostkey”, add the option accept_hostkey=yes to the command, 
+     or add the hostkey to your server’s known_hosts file before running this command.

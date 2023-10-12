@@ -1,0 +1,39 @@
+[1] In the earlier examples, we specified the path to the inventory file on the command line using -i hosts.ini. 
+But we can avoid having to specify this path every time we run ansible commands by specifying the path to the 
+inventory file in an ansible.cfg file that is also stored in the root directory of your project:
+
+ansible.cfg
+=====
+[defaults]
+inventory = pods-hosts.ini
+host_key_checking = False
+
+
+[2] We have a more advanced inventory file where we:
+a. define multiple groups of servers (app, db)
+b. define a "group of groups" to aggregate all server groups
+c. global vars that will be applied to all server groups (username and ssh key)
+
+
+TESTING
+=====
+
+====
+Kubernetes hosts
+====
+>> k create -f test-deployment.yaml
+
+>> k port-forward svc/app-svc-1 2222:2222
+
+>> k port-forward svc/app-svc-2 2322:2322
+
+>> k port-forward svc/db-svc-1 2422:2422
+
+
+AdHoc Commands
+===
+>> ansible multi -a "hostname"
+
+>> ansible multi -a "free -m"
+
+>> ansible multi -a "date"

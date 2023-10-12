@@ -1,0 +1,40 @@
+
+By default, Ansible will run your commands in parallel, using multiple process forks, so the command will complete more quickly.
+
+If you’re managing a few servers, this may not be much quicker than running the command serially, on one server after the other, 
+but even managing 5-10 servers, you’ll notice a dramatic speedup if you use Ansible’s parallelism (which is enabled by default).
+
+Use "-f <number>" arguement to manage how many threads to fork.
+
+>> ansible multi -a "hostname" -f 1
+
+Add the argument -f 1 to tell Ansible to use only one fork (basically, to perform the command on each server in sequence):
+
+Increase the value (like -f 10, or -f 25... depending on how much your system and network connection can handle) to speed up 
+the process of running commands on tens or hundreds of servers.
+
+
+TESTING
+======
+
+====
+Kubernetes hosts
+====
+>> k create -f test-deployment.yaml
+
+>> k port-forward svc/app-svc-1 2222:2222
+
+>> k port-forward svc/app-svc-2 2322:2322
+
+>> k port-forward svc/db-svc-1 2422:2422
+
+
+AdHoc Commands
+===
+>> ansible multi -a "hostname"
+
+>> ansible multi -a "free -m"
+
+>> ansible multi -a "date"
+
+
