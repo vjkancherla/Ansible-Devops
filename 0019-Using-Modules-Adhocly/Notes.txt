@@ -1,0 +1,43 @@
+- We can run ansible module "adhoc-ly", i.e., without playbooks.
+- When you use Ansible’s modules instead of plain shell commands, you can use the powers of abstraction and idempotency offered by Ansible. 
+
+[1] Instead of running the command "apt install -y chrony" on each of the servers, we’ll use ansible’s apt module to do the same 
+
+>> ansible multi -b -m apt -a "name=chrony state=present"
+
+The -b option (alias for --become) tells Ansible to run the command with become (basically, run commands with ‘sudo’).
+
+
+[2] Now we’ll make sure the chrony daemon is started and set to run on boot. We could use two separate commands, 
+systemctl start chronyd and systemctl enable chronyd, but we’ll use Ansible’s service module instead.
+
+>> ansible multi -b -m service -a "name=chrony state=started enabled=yes"
+
+[3] Check to make sure our servers are synced closely to the official time on a time server:
+>> ansible multi -a "date"
+
+
+TESTING
+======
+
+====
+Kubernetes hosts
+====
+>> k create -f test-deployment.yaml
+
+>> k port-forward svc/app-svc-1 2222:2222
+
+>> k port-forward svc/app-svc-2 2322:2322
+
+>> k port-forward svc/db-svc-1 2422:2422
+
+
+AdHoc Commands
+===
+>> ansible multi -a "hostname"
+
+>> ansible multi -a "free -m"
+
+>> ansible multi -a "date"
+
+

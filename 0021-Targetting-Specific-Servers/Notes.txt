@@ -1,0 +1,44 @@
+Since we are created groups of servers in our inventory file, it makes it easy for us to 
+- target a specific group of servers 
+- or, target a specific, individual server
+
+
+>> ansible multi -a "hostname" 
+Runs the command against all servers (aggregated by the "multi" group)
+
+>> ansible app -a "hosts"
+Runs the command against the server under the "App" group only
+
+>> ansible app -a "hosts" --limit "app-server-2.127.0.0.1.nip.io"
+Runs the command against the individual server - app-server-2.127.0.0.1.nip.io
+
+# Limit hosts with a simple pattern (asterisk is a wildcard). 
+>> ansible app -a "hosts" --limit "*.4"
+
+# Limit hosts with a regular expression (prefix with a tilde). 
+>> ansible app -a "hosts" --limit ~".*\.4"
+
+TESTING
+======
+
+====
+Kubernetes hosts
+====
+>> k create -f test-deployment.yaml
+
+>> k port-forward svc/app-svc-1 2222:2222
+
+>> k port-forward svc/app-svc-2 2322:2322
+
+>> k port-forward svc/db-svc-1 2422:2422
+
+
+AdHoc Commands
+===
+>> ansible multi -a "hostname"
+
+>> ansible multi -a "free -m"
+
+>> ansible multi -a "date"
+
+

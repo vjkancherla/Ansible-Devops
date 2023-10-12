@@ -1,0 +1,21 @@
+[1] Generate SSH key for user called "testuser"
+    - >> ssh-keygen -t rsa -b 2048 -C "testuser"
+        - specify a non-default file to create the keys: /Users/vijaykancherla/Downloads/DevOps-Projects/Ansible-Devops/0000-DockerImage/ssh-keys/id_rsa.
+      >> mv id_rsa.pub testuser-public-key.pem  
+      >> mv id_rsa testuser-private-key.pem
+
+      >> ssh-add /Users/vijaykancherla/Downloads/DevOps-Projects/Ansible-Devops/0000-DockerImage/ssh-keys/testuser-private-key.pem
+
+[2] Create an docker image with
+    - SSHD installed and running
+    - a user called "testuser" created (along with a password)
+    - testuser's ssh pub key copied to .ssh/authorized_keys to allow password less access
+
+    - >> docker build -t my-ubuntu-ssh .
+
+    - >> docker tag my-ubuntu-ssh vjkancherla/my-ubuntu-ssh:v1
+    - >> docker push  vjkancherla/my-ubuntu-ssh:v1
+
+[3] Run the image
+    >> docker run -d -p 2222:22 --name ubuntu-ssh my-ubuntu-ssh
+
