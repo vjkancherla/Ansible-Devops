@@ -1,0 +1,57 @@
+---
+- name: Install Node.js, npm, and forever, and disable the firewall
+  hosts: app-server-1.127.0.0.1.nip.io
+  become: yes  # Use sudo privileges
+
+  vars:
+    node_apps_location: /usr/local/opt/node
+
+  tasks:
+    - name: Install Node.js and npm
+      apt:
+        name: 
+          - nodejs
+          - npm
+        state: present
+
+    - name: Install forever globally
+      npm:
+        name: forever
+        global: yes
+
+    - name: Check if UFW package is installed
+      ansible.builtin.command: dpkg-query -l ufw
+      register: ufw_pkg
+      ignore_errors: yes  # Ignore errors to handle the case where the package is not found
+
+
+    - name: Disable UFW (Uncomplicated Firewall) if installed
+      systemd:
+        name: ufw
+        enabled: no
+        state: stopped
+      when: ufw_pkg.rc == 0
+      ignore_errors: yes  
+
+    - name: Ensure Node.js app folder exists.
+      file: 
+        path: "{{ node_apps_location }}"
+        state: directory
+
+    - name: Copy example Node.js app to server.
+      copy: 
+        src: app
+        dest: "{{ node_apps_location}}"
+
+    - name: Install app dependencies defined in package.json.
+      npm:
+        path="{{ node_apps_location }}/app"
+
+    - name: Check list of running Node.js apps.
+      command: /usr/local/bin/forever list
+      register: forever_list
+      changed_when: false
+
+    - name: Start example Node.js app.
+      command: "/usr/local/bin/forever start {{ node_apps_location }}/app/app.js"
+      when: "forever_list.stdout.find(node_apps_location + '/app/app.js') == -1"

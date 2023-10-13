@@ -1,0 +1,63 @@
+
+BREAKING DOWN THE PlAYBOOK
+======
+
+[1] - hosts: app
+    defines the first (and in this case, only) play, and tells Ansible to run the play on the "app" group of servers.
+
+    You can limit a playbook to specific groups or individual hosts by changing the "hosts:" definition. 
+    The value can be set to all hosts, a group of hosts defined in your inventory, multiple groups of hosts (e.g. webservers,dbservers),
+    individual hosts (e.g. atl.example.com), or a mixture of hosts. You can even do wild card matches, 
+    like *.example.com, to match all subdomains
+
+[2] become: yes 
+    tells Ansible to run all the commands through sudo, so the commands will be run as the root user.
+
+[3] tasks:
+    tells Ansible that what follows is a list of tasks to run as part of this play.
+
+[4] The first task begins with "- name: Install Apache"
+    - We use the "apt" module to install Apache.
+    - we can describe to Ansible exactly what we want. 
+    - Ansible will take the list of packages we provide. We tell apt to make sure the packages are installed with "state: present", 
+        but we could also use "state: latest" to ensure the latest version is installed, 
+        or "state: absent" to make sure the packages are not installed.
+
+[5] The second task begins with "- name: Copy configuration files"
+    - We use the copy module to copy files from a source (on our local workstation) to a destination (the server being managed).
+    - Ansible allows lists of variables to be passed into tasks using "with_items:" 
+    - Define a list of items and each one will be passed into the play, referenced using the item variable (e.g. {{ item }}).
+
+[6] The Third task begins with "- name: Make sure Apache is started now and at boot"
+    - We use the service module to describe the desired state of a particular service, in this case httpd, Apache’s http daemon.
+    - We want it to be running, so we set "state: started"
+    - and we want it to run at system startup, so we say "enabled: yes" (the equivalent of running chkconfig httpd on).
+
+
+TESTING
+======
+
+====
+Kubernetes hosts
+====
+>> k create -f test-deployment.yaml
+
+>> k port-forward svc/app-svc-1 2222:2222 &
+
+>> k port-forward svc/app-svc-2 2322:2322 &
+
+>> k port-forward svc/db-svc-1 2422:2422 &
+
+
+Playbook Commands
+===
+>> ansible-playbook playbook.yaml
+
+>> ansible-playbook playbook.yaml --limit xyz.example.com
+Targets a specific host with the group
+
+>> ansible-playbook playbook.yaml --list-hosts
+If you want to see a list of hosts that would be affected by your playbook before you actually run it,
+
+>> ansible-playbook playbook.yaml --check
+Run the playbook in Check Mode (‘Dry Run’);
