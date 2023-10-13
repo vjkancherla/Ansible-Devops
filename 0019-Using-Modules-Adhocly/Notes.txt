@@ -13,6 +13,7 @@ systemctl start chronyd and systemctl enable chronyd, but we’ll use Ansible’
 
 >> ansible multi -b -m service -a "name=chrony state=started enabled=yes"
 
+
 [3] Check to make sure our servers are synced closely to the official time on a time server:
 >> ansible multi -a "date"
 

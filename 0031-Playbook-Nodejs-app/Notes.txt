@@ -1,0 +1,44 @@
+
+IMPORTANT POINT FROM THE PLAYBOOK
+======
+
+[1] We are only running the playbook against a single server - "hosts: app-server-1.127.0.0.1.nip.io"
+
+[2] We check if UFW is installed and stored the result in a ver - "register: ufw_pkg".
+    The task to disable UFW is conditional (when: ufw_pkg.rc == 0). 
+    It will only execute if the ufw_pkg.rc value is equal to 0, indicating that the ufw package is installed.
+
+[3] The copy task copies the entire "app" folder
+
+[4] We only start the nodejs app if its not running.
+    - we first "register" the result of "/usr/local/bin/forever list" command in "forever_list" var
+    - we then check if our app is listed in "forever_list" var. If not, we start it.
+
+
+TESTING
+======
+
+====
+Kubernetes hosts
+====
+>> k create -f test-deployment.yaml
+
+>> k port-forward svc/app-svc-1 2222:2222 &
+
+>> k port-forward svc/app-svc-2 2322:2322 &
+
+>> k port-forward svc/db-svc-1 2422:2422 &
+
+
+Playbook Commands
+===
+>> ansible-playbook playbook.yaml
+
+>> ansible-playbook playbook.yaml --limit xyz.example.com
+Targets a specific host with the group
+
+>> ansible-playbook playbook.yaml --list-hosts
+If you want to see a list of hosts that would be affected by your playbook before you actually run it,
+
+>> ansible-playbook playbook.yaml --check
+Run the playbook in Check Mode (‘Dry Run’);

@@ -1,0 +1,39 @@
+---
+- hosts: app
+  become: yes # Use sudo privileges
+  tasks:
+    - name: Install Apache
+      apt:
+        name:
+          - apache2
+        state: present
+
+    - name: Create document root for domain configured in host variable
+      file:
+        path: "/var/www/mydomain.local"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Copy configuration files
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: root
+        mode: 0644
+      with_items:
+        - src: files/mydomain.local.conf
+          dest: /etc/apache2/sites-available/mydomain.local.conf
+        - src: files/index.html
+          dest: /var/www/mydomain.local/index.html
+
+    - name: Enable the v-host configuration
+      command: a2ensite mydomain.local.conf
+
+    - name: Make sure Apache is started now and at boot
+      service:
+        name: apache2
+        state: started
+        enabled: yes
