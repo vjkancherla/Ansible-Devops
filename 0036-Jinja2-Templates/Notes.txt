@@ -1,0 +1,46 @@
+
+JINJA2 TEMPLATES
+  - Jinja2 is a popular templating engine for Python and is widely used in various web frameworks and tools, 
+    including Ansible, to generate dynamic content or configuration files. 
+
+Template Syntax: 
+  Jinja2 uses a simple and readable syntax for templates. Template variables and expressions are enclosed in double curly braces, 
+  like {{ variable_name }}. You can also use control structures like {% if condition %} ... {% endif %} and 
+  {% for item in items %} ... {% endfor %} to create conditional statements and loops within templates.
+
+Variables: 
+  In Jinja2 templates, you can use variables to insert dynamic data into templates. 
+  These variables can be passed into templates from an external context, such as an Ansible playbook, a web application, or any Python script.
+
+Include Statements: 
+  You can include other templates within a template using the {% include 'filename' %} statement. 
+  This is handy for reusing common sections or components across multiple templates
+  
+
+TESTING
+======
+
+====
+Kubernetes hosts
+====
+>> k create -f test-deployment.yaml
+
+>> k port-forward svc/app-svc-1 2222:2222 &
+
+>> k port-forward svc/app-svc-2 2322:2322 &
+
+>> k port-forward svc/db-svc-1 2422:2422 &
+
+
+Playbook Commands
+===
+>> ansible-playbook playbook.yaml
+
+>> ansible-playbook playbook.yaml --limit xyz.example.com
+Targets a specific host with the group
+
+>> ansible-playbook playbook.yaml --list-hosts
+If you want to see a list of hosts that would be affected by your playbook before you actually run it,
+
+>> ansible-playbook playbook.yaml --check
+Run the playbook in Check Mode (‘Dry Run’);

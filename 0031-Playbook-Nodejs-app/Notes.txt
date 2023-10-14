@@ -1,5 +1,5 @@
 
-IMPORTANT POINT FROM THE PLAYBOOK
+IMPORTANT POINTS FROM THE PLAYBOOK
 ======
 
 [1] We are only running the playbook against a single server - "hosts: app-server-1.127.0.0.1.nip.io"

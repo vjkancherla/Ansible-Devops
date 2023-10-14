@@ -1,0 +1,37 @@
+---
+- name: Deploy Nginx Configuration
+  hosts: app-server-1.127.0.0.1.nip.io
+  become: yes  # Use sudo privileges
+
+  vars_files: 
+    - vars.yaml
+
+  pre_tasks:
+    - name: Update apt cache if needed.
+      apt: 
+        update_cache: true 
+        cache_valid_time: 3600
+
+  tasks:
+    - name: Install NGINX
+      apt:
+        name: nginx
+        state: present
+
+    - name: Copy Nginx configuration template
+      template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/sites-available/default
+      notify: Restart Nginx
+
+    - name: Ensure Nginx configuration is enabled
+      file:
+        src: /etc/nginx/sites-available/default
+        dest: /etc/nginx/sites-enabled/default
+        state: link
+
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
