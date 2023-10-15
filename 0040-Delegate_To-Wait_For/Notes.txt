@@ -1,0 +1,89 @@
+=============
+DELEGATE_TO
+=============
+- By default Ansible gathers facts and executes all tasks on the machines that match the hosts line of your playbook. 
+
+- Delegation is a mechanism that allows you to perform tasks on one host while targeting another host. 
+  It's a way to delegate specific tasks to a different host within a play. 
+
+- you can Delegate tasks to a different machine or group, delegate facts to specific machines or groups, or run an entire playbook locally
+
+
+EXAMPLE-1: Remove a webserver from Load-Balancer Pool before updating it.
+    -----
+    tasks:
+    - name: Take out of load balancer pool
+      ansible.builtin.command: /usr/bin/take_out_of_pool {{ inventory_hostname }}
+      delegate_to: 127.0.0.1
+
+    - name: Actual steps to update the webserver
+      ansible.builtin.yum:
+        name: acme-web-stack
+        state: latest
+
+    - name: Add back to load balancer pool
+      ansible.builtin.command: /usr/bin/add_back_to_pool {{ inventory_hostname }}
+      delegate_to: 127.0.0.1
+    -----
+
+    - The first and third tasks in this play run on 127.0.0.1, which is the machine running Ansible.
+
+
+EXAMPLE-2: Configure a new WebServer and then add it to a mointoring server
+    -----
+    tasks:
+    - name: Congiure a webserver as required
+      command: xxxx
+    --
+    --
+
+    - name: Add server to Munin monitoring configuration. 
+      command: <<add to monitor-server thie webservers>> {{ inventory_hostname }}
+      delegate_to: "{{ monitoring_master }}"
+    ------
+
+
+=========
+WAIT_FOR
+=========
+- The wait_for module in Ansible is used to pause playbook execution until a certain condition is met on a target host. 
+
+- It allows you to wait for 
+    - specific network ports to become available
+    - for files or directories to appear or disappear
+    - or for a specific string to be present in a file. 
+    
+- This module is handy for ensuring that a target host has reached a desired state or is ready to proceed with subsequent tasks.
+
+- If the condition is not met within the specified timeout, the task will fail.
+
+
+EXAMPLE-1: Waiting for a Port to Become Available
+    -----
+     tasks:
+     - name: Wait for port 80 to be available
+       wait_for:
+         host: myserver
+         port: 80
+         timeout: 60  # Wait for up to 60 seconds
+    -----
+
+EXAMPLE-2:  Waiting for a Port to Become Available locally and Then Ensure that the Port is Accessible From Monitoring Server
+    ------
+    tasks:
+     - name: Wait for port 80 to be available
+       wait_for:
+         host: myserver
+         port: 80
+         timeout: 60  # Wait for up to 60 seconds
+
+    tasks:
+     - name: Wait for port 80 to be available
+       wait_for:
+         host: "{{ inventory_hostname }}"
+         port: 80
+         timeout: 60  # Wait for up to 60 seconds
+       delegate_to: "{{ monitoring_master }}"
+    -----
+
+
