@@ -1,0 +1,149 @@
+========================================
+SETTING ENV VARS ON THE REMOTE MACHINE
+========================================
+
+[1] If you need to set some environment variables for your remote user account, you can do that by adding lines to the remote user’s 
+.bash_profile, like so:
+
+    ----
+    - name: Add an environment variable to the remote user's shell. 
+    lineinfile:
+        dest: ~/.bash_profile 
+        regexp: '^ENV_VAR=' 
+        line: "ENV_VAR=value"
+    ----
+
+
+[2] Setting environment variables that can be consumed by the tasks running on the remote machine:
+
+    -----
+    vars: 
+        proxy_vars:
+            http_proxy: http://example-proxy:80/ 
+            https_proxy: https://example-proxy:443/ 
+            [etc...]
+    tasks:
+        - name: Download a file, using example-proxy as a proxy.
+        get_url:
+            url: http://www.example.com/file.tar.gz 
+            dest: ~/Downloads/
+        environment: proxy_vars
+    -----
+
+
+=======================================
+CONDITIONALLY IMPORTING VARIABLES FILE
+=======================================
+
+Say, for instance, you have one set of variables for your RHEL servers (where the Apache service is named httpd), 
+and another for your Debian servers (where the Apache service is named apache2). 
+In this case, you can conditionally include variables files using include_vars:
+
+    ----
+    - hosts: example
+
+        pre_tasks:
+           - include_vars: "{{ item }}"
+        with_first_found:
+           - "apache_{{ ansible_os_family }}.yml" 
+           - "apache_default.yml"
+        
+        tasks:
+        - name: Ensure Apache is running.
+            service:
+            name: "{{ apache_service_name }}" 
+            state: running
+    ----
+
+Then, add two files in the same folder as your example playbook, apache_RedHat.yml, and apache_default.yml. 
+Define the variable apache_service_name: httpd in the CentOS file, and apache_service_name: apache2 in the default file.
+
+
+
+======================
+INVENTORY VARIABLES
+======================
+
+- Variables may also be added via Ansible inventory files, either inline with a host definition, or after a group:
+
+    ----
+    1 # Host-specific variables (defined inline).
+    2 [washington]
+    3 app1.example.com proxy_state=present
+    4 app2.example.com proxy_state=absent
+    5
+    6 # Variables defined for the entire group.
+    7 [washington:vars]
+    8 cdn_host=washington.static.example.com
+    9 api_version=3.0.1
+    ----
+
+- Ansible’s documentation recommends not storing variables within the inventory.
+
+- Instead, you can use group_vars and host_vars YAML variable files within a specific path, 
+  and Ansible will assign them to individual hosts and groups defined in your inventory.
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>
+GROUP_VARS and HOST_VARS
+<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Ansible will search within the same directory as your inventory file (or inside /etc/ansible if you’re using the
+default inventory file at /etc/ansible/hosts) for two specific directories: group_vars and host_vars.
+
+For example, to apply a set of variables to the host app1.example.com, create a blank file named app1.example.com 
+at the location host_vars/app1.example.com, and add variables as you would in an included vars_files YAML file.
+
+To apply a set of variables to the entire washington group, create a similar file in the location group_vars/washington 
+(substitute washington for whatever group name’s variables you’re defining).
+
+You can also define a group_vars/all file that would apply to all groups.
+
+EXAMPLE:
+We have an inventory file as follows:
+    ----
+    # Application servers
+    [app]
+    app-server-1.127.0.0.1.nip.io:2222
+    app-server-2.127.0.0.1.nip.io:2322
+
+    # Database server
+    [db]
+    db-server-1.127.0.0.1.nip.io:2422
+
+    # Group 'multi' with all servers
+    [multi:children]
+    app
+    db
+    ----
+
+We can define GROUP_VARS and HOST_VARS files as follows:
+    - host_vars/
+        - app-server-1.127.0.0.1.nip.io
+        - db-server-1.127.0.0.1.nip.io
+    - group_vars/
+        - app
+        - db
+        - all
+
+
+======================
+REGISTERED VARIABLES
+=======================
+
+There are many times that you will want to run a command, then use its return code, stderr, or stdout to 
+determine whether to run a later task. For these situations, Ansible allows you to use register to store the 
+output of a particular command in a variable at runtime.
+
+
+    -----
+    tasks:
+        - name: "Node: Check list of Node.js apps running."
+          command: forever list
+          register: forever_list
+          changed_when: false
+
+        - name: "Node: Start example Node.js app."
+          command: forever start {{ node_apps_location }}/app/app.js
+           when: "forever_list.stdout.find(node_apps_location '/app/app.js') == -1"
+    -----

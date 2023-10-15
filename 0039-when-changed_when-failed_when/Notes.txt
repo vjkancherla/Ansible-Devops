@@ -1,0 +1,113 @@
+====
+WHEN
+====
+- The when statement in Ansible playbooks is used to conditionally execute tasks based on specified conditions or variables. 
+
+EXAMPLE-1: Conditional Task Execution Based on a Variable:
+    -----
+    tasks:
+    - name: Install Apache on CentOS 7
+      yum:
+        name: httpd
+        state: present
+      when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+    -----
+
+
+EXAMPLE-2: Conditional Task Execution Based on a Registered Variable
+    -----
+     tasks:
+        - name: Check if /etc/myfile exists
+        stat:
+            path: /etc/myfile
+        register: file_result
+
+        - name: Take action if the file exists
+        debug:
+            msg: "The file /etc/myfile exists."
+        when: file_result.stat.exists == true
+    -----
+
+
+EXAMPLE-3: Conditional Task Execution Based on Inventory Variables:
+    -----
+    tasks:
+    - name: Configure Nginx for production
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      when: environment == 'production'
+    -----
+
+
+EXAMPLE-4: Conditional Task Execution Based on the Result of a Previous Task
+    -----
+    tasks:
+    - name: Check if myservice is running
+      service_facts:
+      register: service_facts
+
+    - name: Restart myservice if it's not running
+      service:
+        name: myservice
+        state: restarted
+      when: "'myservice' not in service_facts.services"
+    -----
+
+
+=============
+CHANGED_WHEN
+=============
+- The changed_when statement in Ansible playbooks allows you to override the default behavior of determining 
+  whether a task changed something on the target system. You can use it to explicitly specify when a task should 
+  report as "changed" or "not changed" based on specific conditions
+
+EXAMPLE-1: Custom Change Condition:
+    -----
+    tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+      changed_when: false  # Report as "not changed" even if the task updates the package cache
+    -----
+
+EXAMPLE-2: Custom Change Condition Based on Output
+    -----
+    - name: Install a package
+        hosts: servers
+        become: yes
+
+        tasks:
+            - name: Install package myapp
+            apt:
+                name: myapp
+                state: present
+            register: result
+            changed_when: "'Package myapp is already installed' not in result.stdout"
+    -----
+
+
+=============
+FAILED_WHEN
+=============
+- The failed_when statement in Ansible playbooks allows you to specify custom conditions under which a task should be 
+considered as failed, even if it technically completed without errors. This can be useful for situations where a task 
+may produce a result that is not desirable, but Ansible wouldn't consider it a failure by default.
+
+EXAMPLE-1: Custom Failure Condition Based on a Command Result
+    -----
+    tasks:
+    - name: Check if /etc/myfile exists
+      command: test -e /etc/myfile
+      register: file_exists_result
+      failed_when: file_exists_result.rc != 0
+    -----
+
+EXAMPLE-2: Custom Failure Condition Based on the Output
+    -----
+    tasks:
+    - name: Check if myservice is running
+      command: systemctl is-active myservice
+      register: service_status
+      failed_when: "'active' not in service_status.stdout"
+    -----

@@ -1,0 +1,3 @@
+# define vars of all the hosts in the "app" group in pod-hosts.ini
+server_name: example.com
+web_root: /var/www/html
