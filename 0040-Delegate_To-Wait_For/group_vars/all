@@ -1,0 +1,4 @@
+# define vars of all the hosts in all the groups in pod-hosts.ini
+
+ansible_user: testuser
+ansible_ssh_private_key_file: /Users/vijaykancherla/Downloads/DevOps-Projects/Ansible-Devops/0000-DockerImage/ssh-keys/testuser-private-key.pem

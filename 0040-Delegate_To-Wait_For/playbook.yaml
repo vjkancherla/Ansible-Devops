@@ -1,0 +1,45 @@
+- hosts: app
+  become: yes
+  tasks:
+    - name: Touch a file on app servers
+      shell: "echo 'appserver{{ host_number }}' > /opt/whoami"
+
+- hosts: db
+  become: yes
+  tasks:
+    - name: Touch a file on the db server
+      shell: "echo 'dbserver1' > /opt/whoami"
+
+- hosts: app
+  become: yes
+  tasks:
+    - name: Collect database server name
+      register: dbserver_whoami
+      shell: cat /opt/whoami
+      delegate_to: "{{ groups['db'][0] }}"
+      ignore_errors: True
+
+    - name: Print db hostname
+      debug:
+        msg: "Hostname from db server is {{ dbserver_whoami.stdout }}"
+
+    - name: Store database server name
+      shell: "echo '{{ dbserver_whoami.stdout }}' > /opt/dbserver"
+
+- hosts: db
+  become: yes
+  tasks:
+    - name: Collect app server names
+      register: appserver_whoami
+      shell: cat /opt/whoami
+      delegate_to: "{{ item }}"
+      ignore_errors: True
+      with_items: "{{ groups['app'] }}"
+    
+    - name: Print app hostnames
+      debug:
+        msg: "Hostname from {{ item.item }} is {{ item.stdout }}"
+      with_items: "{{ appserver_whoami.results }}"
+
+    - name: Store webserver server name
+      shell: "echo '{{ appserver_whoami.results }}' > /opt/appservers"
