@@ -1,0 +1,36 @@
+===========
+INCLUDES
+===========
+
+- If you use import_tasks, Ansible statically imports the task file as if it were part of the main playbook, once, 
+  before the Ansible play is executed.
+
+- When you use include_tasks, Ansible treats the included tasks as a separate list of tasks that are executed within 
+  the current playbook. They don't merge into the playbook itself but are executed in the order they appear in the included tasks file.
+
+- Variables defined in the included tasks remain within the scope of those tasks. They are not available in the playbook's 
+  scope unless you use the register module to capture values.
+
+EXAMPLE:
+
+    common_tasks.yml:
+    -----
+    - name: Ensure a specific directory exists
+    file:
+        path: /tmp/my_directory
+        state: directory
+
+    - name: Create a text file
+    file:
+        path: /tmp/my_directory/my_file.txt
+        state: touch
+    -----
+
+    main_playbook.yaml
+    ------
+      - name: Include Tasks Example
+        hosts: localhost
+        tasks:
+            - name: Include common tasks
+            include_tasks: common_tasks.yml
+    ------

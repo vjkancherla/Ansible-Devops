@@ -1,0 +1,71 @@
+========
+BLOCKS
+========
+- Blocks are a way to group multiple tasks together into a single named block. 
+
+- Blocks are used to organize and control the execution of tasks, making playbooks more readable and manageable.
+
+- Blocks are primarily used to group related tasks together, providing a logical structure to your playbook.
+
+- They also allow you to handle errors inside the blocks in a way similar to most programming languages’ exception handling.
+
+
+EXAMPLE: playbook that uses blocks with "when" to run group of tasks specific to one platform, without "when" for each task.
+    -----
+    - hosts: web
+    tasks:
+        - name: Install and configure Apache on RHEL/CentOS hosts.
+        block:
+            - name: Install Apache on RHEL/CentOS
+            dnf:
+                name: httpd
+                state: present
+            - name: Copy httpd.conf.j2 to /etc/httpd/conf/httpd.conf
+            template:
+                src: httpd.conf.j2
+                dest: /etc/httpd/conf/httpd.conf
+            - name: Start and enable Apache service on RHEL/CentOS
+            service:
+                name: httpd
+                state: started
+                enabled: yes
+        when: ansible_os_family == 'RedHat'
+        become: yes
+
+        - name: Install and configure Apache on Debian/Ubuntu hosts.
+        block:
+            - name: Install Apache on Debian/Ubuntu
+            apt:
+                name: apache2
+                state: present
+            - name: Copy httpd.conf.j2 to /etc/apache2/apache2.conf
+            template:
+                src: httpd.conf.j2
+                dest: /etc/apache2/apache2.conf
+            - name: Start and enable Apache service on Debian/Ubuntu
+            service:
+                name: apache2
+                state: started
+                enabled: yes
+        when: ansible_os_family == 'Debian'
+        become: yes
+
+    -----
+
+
+EXAMPLE: gracefully handle task failures using "block"
+
+    -----
+    tasks:
+    - block:
+        - name: Script to connect the app to a monitoring service. 
+          script: monitoring-connect.sh
+      rescue:
+        - name: This will only run in case of an error in the block.
+          debug: 
+            msg="There was an error in the block." 
+      always:
+        - name: This will always run, no matter what. 
+        debug: 
+            msg="This always executes."
+    -----

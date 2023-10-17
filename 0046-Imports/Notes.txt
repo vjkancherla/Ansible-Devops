@@ -1,0 +1,91 @@
+========
+IMPORTS
+=========
+- "import" refers to the process of including/importing other files in a playbook
+
+
+IMPORT VARIABLES
+-------------------
+- We have already seen the most basic import - import a variables file into playbook:
+    
+    ----- 
+    - hosts: all 
+
+      vars_files:
+        - vars.yml
+    -----
+
+
+IMPORT TASKS
+-------------------
+- Tasks can easily be included in a similar way. In the tasks: section of yourplaybook, you can add import_tasks directives.
+
+- If you use import_tasks, Ansible statically imports the task file as if it were part of the main playbook, once, before the Ansible play is executed.
+
+- Variables defined in the included tasks are available in the playbook scope.
+
+EXAMPLE:
+    -----
+    - hosts: all
+      
+      vars:
+        username: testuser 
+
+      tasks:
+        - import_tasks: imported-tasks.yml
+    -----
+
+    The imported-tasks.yml could look like this:
+
+    ------
+    - name: Add profile info for user. 
+      copy:
+        src: example_profile
+        dest: "/home/{{ username }}/.profile" 
+        owner: "{{ username }}"
+        group: "{{ username }}"
+      mode: 0744
+
+    - name: Add private keys for user. 
+      copy:
+        src: "{{ item.src }}"
+        dest: "/home/{{ username }}/.ssh/{{ item.dest }}" 
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: 0600
+      with_items: "{{ ssh_private_keys }}"
+
+    - name: Restart example service. 
+      service:
+        name: example 
+        state: restarted
+
+    ------
+
+
+IMPORT HANDLERS
+--------------------
+  - Handlers can be imported or included just like tasks, within a playbook’s handlers section. For example:
+    
+   EXAMPLE
+    -----------
+    handlers:
+    - import_tasks: handlers.yml
+    -----------
+
+
+
+  IMPORT PLAYBOOKS
+  --------------------
+    - Playbooks can even be included in other playbooks,
+
+    EXAMPLE:
+      ----
+      - hosts: all 
+        remote_user: root
+        
+        tasks: [...]
+
+      - import_playbook: web.yml
+      - import_playbook: db.yml
+      ----

@@ -7,7 +7,7 @@ SETTING ENV VARS ON THE REMOTE MACHINE
 
     ----
     - name: Add an environment variable to the remote user's shell. 
-    lineinfile:
+      lineinfile:
         dest: ~/.bash_profile 
         regexp: '^ENV_VAR=' 
         line: "ENV_VAR=value"

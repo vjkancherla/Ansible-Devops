@@ -1,0 +1,13 @@
+---
+- name: Web Server Setup with Nginx
+  hosts: app
+  become: yes
+
+  vars_files:
+    - vars/some_vars.yaml
+  
+  tasks:
+    - import_tasks: tasks/nginx_install_tasks.yaml
+
+  handlers:
+    - import_tasks: handlers/handlers.yaml

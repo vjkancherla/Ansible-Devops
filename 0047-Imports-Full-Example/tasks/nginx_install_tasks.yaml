@@ -1,0 +1,29 @@
+---
+- name: Ensure Nginx package is installed
+  apt:
+    name: nginx
+    state: present
+
+- name: Ensure Nginx service is enabled and started
+  service:
+    name: nginx
+    enabled: yes
+    state: started
+
+- name: Configure Nginx virtual host
+  template:
+    src: templates/nginx_vhost.conf.j2
+    dest: /etc/nginx/sites-available/mywebsite
+  notify: reload Nginx
+
+- name: Enable the Nginx virtual host
+  command: ln -s /etc/nginx/sites-available/mywebsite /etc/nginx/sites-enabled/
+  args:
+    creates: /etc/nginx/sites-enabled/mywebsite
+  notify: reload Nginx
+
+- name: Disable the default Nginx configuration
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: reload Nginx

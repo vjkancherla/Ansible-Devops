@@ -1,0 +1,37 @@
+======
+TAGS
+======
+
+- Tags allow you to run (or exclude) subsets of a playbook’s tasks.
+
+- You can tag roles, included files, individual tasks, and even entire plays.
+
+    =====
+    # You can apply tags to an entire play.
+    - hosts: webservers 
+      tags: deploy
+
+      roles:
+        # Tags applied to a role will be applied to tasks in the role.
+        - role: tomcat
+          tags: ['tomcat', 'app']
+
+      tasks:
+        - name: Notify on completion.
+          local_action:
+            module: osx_say
+            msg: "{{inventory_hostname}} is finished!" 
+            voice: Zarvox
+          tags:
+            - notifications 
+            - say
+
+        - import_tasks: foo.yml 
+          tags: foo
+    =======
+
+- Run the command below to only run the tomcat role and the Notify on completion task:
+    >> ansible-playbook playbook.yml --tags "tomcat,say"
+
+- If you want to exclude anything tagged with notifications, you can use --skip-tags:
+    >> ansible-playbook playbook.yml --skip-tags "notifications"
