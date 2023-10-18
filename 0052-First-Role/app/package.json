@@ -1,0 +1,14 @@
+{
+    "name": "examplenodeapp",
+    "You may be wondering why sometimes quotes are used in these YAML playbooks, and sometimes not. I typically use quotes around my parameters in the following scenarios": [
+        "If I have a Jinja variable (e.g. {{ variable_here }}) at the beginning or end of the line; otherwise YAML will parse the line as nested objects due to the braces.",
+        "If there are any colons (:) in the string (e.g. for URLs).",
+        "The easiest way to make sure you’re quoting things correctly is to use YAML syntax highlighting in your code editor."
+    ],
+    "description": "Example Express Node.js app.",
+    "author": "Jeff Geerling <geerlingguy@mac.com>",
+    "dependencies": {
+        "express": "4.x"
+    },
+    "engine": "node >= 10.0.2"
+}
