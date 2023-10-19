@@ -1,0 +1,10 @@
+---
+- name: Install Node.js, npm, nginx using roles
+  hosts: app
+  become: yes  # Use sudo privileges
+
+
+  roles:
+    # - common
+    # - nodejs
+    - nginx

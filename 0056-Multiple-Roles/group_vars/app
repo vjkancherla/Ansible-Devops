@@ -1,0 +1,7 @@
+# define vars of all the hosts in the "app" group in pod-hosts.ini
+node_apps_location: /usr/local/opt/node
+
+node_npm_modules: 
+  - forever
+  - async
+  - request

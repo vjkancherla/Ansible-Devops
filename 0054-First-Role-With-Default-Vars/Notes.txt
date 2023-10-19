@@ -1,0 +1,25 @@
+
+
+TESTING
+======
+
+====
+Kubernetes hosts
+====
+>> deploy.sh
+
+>> destroy.sh
+
+
+Playbook Commands
+===
+>> ansible-playbook playbook.yaml
+
+>> ansible-playbook playbook.yaml --limit xyz.example.com
+Targets a specific host with the group
+
+>> ansible-playbook playbook.yaml --list-hosts
+If you want to see a list of hosts that would be affected by your playbook before you actually run it,
+
+>> ansible-playbook playbook.yaml --check
+Run the playbook in Check Mode (‘Dry Run’);

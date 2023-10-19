@@ -1,0 +1,53 @@
+---
+- name: Ensure Nginx package is installed
+  apt:
+    name: nginx
+    state: present
+
+- name: Check if Port 80 is already in use
+  wait_for:
+    host: 127.0.0.1
+    port: 80
+    state: stopped
+    timeout: 2
+  ignore_errors: yes
+  register: port_80_status
+
+- block:
+    - name: Create a backup of the original Nginx configuration
+      command: cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+      ignore_errors: yes
+      register: backup_result
+
+    - name: Update the Nginx configuration to use port 8080
+      lineinfile:
+        path: /etc/nginx/nginx.conf
+        regexp: "^listen "
+        line: "listen 8080;"
+      notify: reload Nginx
+      when: backup_result.rc == 0   
+  when: port_80_status.failed
+
+- name: Ensure Nginx service is enabled and started
+  service:
+    name: nginx
+    enabled: yes
+    state: started
+
+- name: Configure Nginx virtual host
+  template:
+    src: templates/nginx_vhost.conf.j2
+    dest: /etc/nginx/sites-available/mywebsite
+  notify: reload Nginx
+
+- name: Enable the Nginx virtual host
+  command: ln -s /etc/nginx/sites-available/mywebsite /etc/nginx/sites-enabled/
+  args:
+    creates: /etc/nginx/sites-enabled/mywebsite
+  notify: reload Nginx
+
+- name: Disable the default Nginx configuration
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: reload Nginx

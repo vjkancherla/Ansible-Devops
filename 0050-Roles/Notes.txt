@@ -57,3 +57,30 @@ EXAMPLE:
       roles:
         - role_name
     -----
+
+  =====
+
+Imagine if you had a playbook structure like:
+  -----
+  - hosts: appservers 
+    
+    roles:
+    - dnf-repo-setup 
+    - firewall
+    - nodejs
+    - app-deploy
+  -----
+
+Each one of the roles lives in its own isolated world, and can be shared with other servers and groups of servers in your infrastructure.
+
+- A dnf-repo-setup role could enable certain repositories and import their GPG keys.
+- A firewall role could have per-server or per-inventory-group options for ports and services to allow or deny.
+- An app-deploy role could deploy your app to a directory (configurable per-server) and set certain app options per-server or per-group.
+
+These things are easy to manage when you have small bits of functionality separated into different roles. 
+Instead of managing 100+ lines of playbook tasks, and manually prefixing every name: with something like 
+“Common |” or “App Deploy |”, you now manage a few roles with 10-20 lines of YAML each.
+
+On top of that, when you’re building your main playbooks, they can be extremely simple (like the above example), enabling you to 
+see everything being configured and deployed on a particular server without scrolling through dozens of included playbook files 
+and hundreds of tasks.
