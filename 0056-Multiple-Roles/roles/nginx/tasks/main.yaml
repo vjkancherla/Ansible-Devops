@@ -3,6 +3,7 @@
   apt:
     name: nginx
     state: present
+  register: nginx_pkg
 
 - name: Check if Port 80 is already in use
   wait_for:
@@ -12,21 +13,37 @@
     timeout: 2
   ignore_errors: yes
   register: port_80_status
+  when: nginx_pkg.changed
+
+# - name: Print the content of the registered variable
+#   debug:
+#     var: nginx_pkg
+
 
 - block:
+    - name: Set nginx_port to 8080 if condition is met
+      set_fact:
+        nginx_port: "{{ nginx_alt_listen_port }}"
+
     - name: Create a backup of the original Nginx configuration
-      command: cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+      command: cp /etc/nginx/sites-available/default /tmp/default.bak
       ignore_errors: yes
       register: backup_result
 
-    - name: Update the Nginx configuration to use port 8080
+    - name: Replace "listen 80 default_server;" with "listen 8080 default_server;"
       lineinfile:
-        path: /etc/nginx/nginx.conf
-        regexp: "^listen "
-        line: "listen 8080;"
-      notify: reload Nginx
-      when: backup_result.rc == 0   
-  when: port_80_status.failed
+        path: /etc/nginx/sites-available/default
+        regexp: '^\s*listen 80 default_server;'
+        line: 'listen {{ nginx_port }} default_server;'
+
+    - name: Replace "listen [::]:80 default_server;" with "listen [::]:8080 default_server;"
+      lineinfile:
+        path: /etc/nginx/sites-available/default
+        regexp: '^\s*listen \[::\]:80 default_server;'
+        line: 'listen [::]: {{ nginx_port }} default_server;'
+
+  # when: port_80_status.failed
+  when: true
 
 - name: Ensure Nginx service is enabled and started
   service:

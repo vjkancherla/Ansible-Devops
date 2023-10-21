@@ -1,2 +1,4 @@
 ---
 server_name: "example-server"
+ngnix_port: 80
+nginx_alt_listen_port: 8080
