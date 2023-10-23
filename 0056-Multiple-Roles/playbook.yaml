@@ -5,6 +5,6 @@
 
 
   roles:
-    # - common
-    # - nodejs
+    - common
+    - nodejs
     - nginx

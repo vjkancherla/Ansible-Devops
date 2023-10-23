@@ -1,0 +1,35 @@
+===================
+ANSIBLE GALAXY
+===================
+
+Using Role Requirements File to Manage Dependencies
+----------------------------------------------------------
+- A role requirements file, often named requirements.yml, is a convenient way to manage Ansible roles, 
+  especially when you have multiple roles with specific versions and dependencies. 
+
+- This file allows you to declare the roles your Ansible playbook requires, along with their versions and sources.
+
+- This file allows you to install roles from Ansible Galaxy, GitHub, an HTTP download, BitBucket, or your own repository.
+
+EXAMPLE: requirements.yaml
+    ====
+    ---
+    roles:
+        # From Ansible Galaxy, latest version.
+        - name: geerlingguy.firewall
+
+        # From Ansible Galaxy, specifying the version.
+        - name: geerlingguy.php version: 4.3.1
+
+        # From GitHub, with a custom name and version.
+        - src: https://github.com/geerlingguy/ansible-role-passenger 
+          name: passenger
+          version: 2.0.0
+
+        # From a web server, with a custom name.
+        - src: https://www.example.com/ansible/roles/my-role-name.tar.gz 
+          name: my-role
+    ====
+
+    To install the roles defined in a requirements file, use the command:
+    >> ansible-galaxy install -r requirements.yml

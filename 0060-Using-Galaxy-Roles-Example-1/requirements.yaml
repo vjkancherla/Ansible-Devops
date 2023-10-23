@@ -1,0 +1,13 @@
+---
+    roles:
+        # From Ansible Galaxy, latest version.
+        - name: geerlingguy.mysql
+
+        # From Ansible Galaxy, latest version.
+        - name: geerlingguy.apache
+
+        # From Ansible Galaxy, latest version.
+        - name: geerlingguy.php
+
+        # From Ansible Galaxy, latest version.
+        - name: geerlingguy.php-mysql

@@ -1,0 +1,9 @@
+---
+- hosts: app-server-1.127.0.0.1.nip.io
+  become: yes
+
+  roles:
+    - geerlingguy.mysql
+    - geerlingguy.apache
+    - geerlingguy.php
+    - geerlingguy.php-mysql

@@ -1,0 +1,20 @@
+===================
+ANSIBLE GALAXY
+===================
+
+Installing Roles from Ansible Galaxy
+----------------------------------------
+- To use roles from Ansible Galaxy, you first need to install them on your Ansible control machine. You can use the ansible-galaxy command to do this. 
+
+- To install a role from Ansible Galaxy, use the ansible-galaxy install command followed by the role's name. 
+    For example:
+    ====
+    ansible-galaxy install author_name.role_name
+    ====
+
+    ====
+    ansible-galaxy role install \
+    geerlingguy.apache \
+    geerlingguy.mysql \
+    geerlingguy.php
+    ====

@@ -40,10 +40,9 @@
       lineinfile:
         path: /etc/nginx/sites-available/default
         regexp: '^\s*listen \[::\]:80 default_server;'
-        line: 'listen [::]: {{ nginx_port }} default_server;'
+        line: 'listen [::]:{{ nginx_port }} default_server;'
 
-  # when: port_80_status.failed
-  when: true
+  when: port_80_status.failed
 
 - name: Ensure Nginx service is enabled and started
   service:

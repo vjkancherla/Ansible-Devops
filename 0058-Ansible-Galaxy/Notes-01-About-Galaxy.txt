@@ -1,0 +1,8 @@
+===================
+ANSIBLE GALAXY
+===================
+- Ansible Galaxy is a web-based platform and command-line tool that simplifies the sharing, distribution, and use of Ansible roles.
+
+- It provides a centralized repository where you can find and download Ansible roles created and shared by the Ansible community. 
+
+- Using roles from Ansible Galaxy can save you time and effort in managing your Ansible playbooks and infrastructure automation tasks.
