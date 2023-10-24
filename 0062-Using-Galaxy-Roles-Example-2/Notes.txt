@@ -1,5 +1,5 @@
 ================================
-A LAMP STACK USING GALAXY ROLES
+A SOLR SERVER USING GALAXY ROLES
 =================================
 
 [1] Define the required roles in a requirements file:
@@ -9,16 +9,10 @@ A LAMP STACK USING GALAXY ROLES
     ---
     roles:
         # From Ansible Galaxy, latest version.
-        - name: geerlingguy.mysql
+        - name: geerlingguy.java
 
         # From Ansible Galaxy, latest version.
-        - name: geerlingguy.apache
-
-        # From Ansible Galaxy, latest version.
-        - name: geerlingguy.php
-
-        # From Ansible Galaxy, latest version.
-        - name: geerlingguy.php-mysql
+        - name: geerlingguy.solr
     ======
 
 

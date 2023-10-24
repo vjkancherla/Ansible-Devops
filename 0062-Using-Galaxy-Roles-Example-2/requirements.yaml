@@ -1,0 +1,7 @@
+---
+    roles:
+        # From Ansible Galaxy, latest version.
+        - name: geerlingguy.java
+
+        # From Ansible Galaxy, latest version.
+        - name: geerlingguy.solr

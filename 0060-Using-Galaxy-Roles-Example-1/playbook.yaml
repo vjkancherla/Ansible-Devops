@@ -3,7 +3,11 @@
   become: yes
 
   roles:
-    - geerlingguy.mysql
+    - role: buluma.mysql
+      vars:
+        mysql_name: mysql
+        mysql_service: mysql
+
     - geerlingguy.apache
     - geerlingguy.php
     - geerlingguy.php-mysql
