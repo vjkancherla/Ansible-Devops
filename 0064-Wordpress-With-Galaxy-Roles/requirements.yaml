@@ -1,0 +1,5 @@
+---
+    roles:
+        # From Github, latest version.
+        - name: vjk.mysql
+          src: https://github.com/vjkancherla/ansible-role-mysql

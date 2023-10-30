@@ -1,0 +1,23 @@
+---
+- hosts: db
+  become: yes
+
+  roles:
+    - role: vjk.mysql
+      vars:
+        mysql_name: mysql
+        mysql_service: mysql
+        mysql_databases:
+          - name: wordpress
+            state: present
+            encoding: utf8
+            collation: utf8_bin
+        mysql_users:
+          - name: wordpress_user
+            state: present
+            password: Secret123!
+            priv: "wordpress.*:ALL"
+            update_password: on_create
+
+
+  

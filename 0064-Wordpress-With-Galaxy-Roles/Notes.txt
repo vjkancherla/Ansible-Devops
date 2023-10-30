@@ -1,0 +1,32 @@
+================================
+A LAMP STACK USING GALAXY ROLES
+=================================
+
+[1] Define the required roles in a requirements file:
+
+    requirements.yaml
+    ======
+    ---
+    roles:
+        # From Ansible Galaxy, latest version.
+        - name: geerlingguy.mysql
+
+        # From Ansible Galaxy, latest version.
+        - name: geerlingguy.apache
+
+        # From Ansible Galaxy, latest version.
+        - name: geerlingguy.php
+
+        # From Ansible Galaxy, latest version.
+        - name: geerlingguy.php-mysql
+    ======
+
+
+[2] Install the required roles:
+    
+    >> ansible-galaxy install -r requirements.yaml
+
+
+[3] Run the playbook
+
+    >> ansible-playbook playbook.yaml 
