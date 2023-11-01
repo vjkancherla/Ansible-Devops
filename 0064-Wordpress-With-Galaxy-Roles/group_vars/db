@@ -1,1 +1,18 @@
 # define vars of all the hosts in the "db" group in pod-hosts.ini
+
+_mysql_name: mysql
+
+_mysql_service: mysql
+
+_mysql_databases:
+  - name: wordpress
+    state: present
+    encoding: utf8
+    collation: utf8_bin
+
+_mysql_users:
+  - name: wordpress_user
+    state: present
+    password: Secret123!
+    priv: "wordpress.*:ALL"
+    update_password: on_create

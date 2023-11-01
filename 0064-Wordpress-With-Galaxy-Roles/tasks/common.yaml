@@ -1,0 +1,9 @@
+---
+# tasks file for common commands
+
+- name: Install net-tools (for netstat) and curl on Ubuntu
+  ansible.builtin.apt:
+    name:
+      - net-tools
+      - curl
+    state: present

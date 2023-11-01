@@ -1,2 +1,10 @@
 # define vars of all the hosts in the "app" group in pod-hosts.ini
-node_apps_location: /usr/local/opt/node
+
+nginx_server_root: "/var/www/{{ ansible_hostname }}"
+
+nginx_custom_vhosts:
+  - listen: "80"
+    server_name:  "{{ ansible_hostname }}"
+    root: "{{ nginx_server_root }}"
+    index: "index.html index.htm"
+    filename: "{{ ansible_hostname }}.conf"

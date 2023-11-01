@@ -1,0 +1,27 @@
+---
+# tasks file for post-install of nginx
+
+- name: Ensure server-root directory exists
+  ansible.builtin.file:
+    path: "{{ nginx_server_root }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Copy index.html to server
+  ansible.builtin.copy:
+    src: files/index.html
+    dest: "{{ nginx_server_root }}/index.html"
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Test nginx response
+  uri:
+    url: http://{{ ansible_hostname }}:80/
+    status_code: 200
+  register: response
+  until: response.status == 200
+  retries: 5
+  delay: 2

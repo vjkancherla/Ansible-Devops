@@ -11,3 +11,7 @@
         # From Github, latest version.
         - name: vjk.nginx
           src: https://github.com/vjkancherla/ansible-role-nginx
+
+        # from locally cloned git repository (git+file:// requires full paths)
+        - name: vjk.php
+          src: git+file:///Users/vijaykancherla/Downloads/DevOps-Projects/TMP/ansible-role-php

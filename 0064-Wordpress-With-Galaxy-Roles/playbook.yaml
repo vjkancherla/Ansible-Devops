@@ -1,23 +1,14 @@
 ---
-# - hosts: db
-#   become: yes
+- hosts: db
+  become: yes
 
-#   roles:
-#     - role: vjk.mysql
-#       vars:
-#         mysql_name: mysql
-#         mysql_service: mysql
-#         mysql_databases:
-#           - name: wordpress
-#             state: present
-#             encoding: utf8
-#             collation: utf8_bin
-#         mysql_users:
-#           - name: wordpress_user
-#             state: present
-#             password: Secret123!
-#             priv: "wordpress.*:ALL"
-#             update_password: on_create
+  roles:
+    - role: vjk.mysql
+      vars:
+        mysql_name: "{{ _mysql_name }}"
+        mysql_service: "{{ _mysql_service }}"
+        mysql_databases: "{{ _mysql_databases }}"
+        mysql_users: "{{ _mysql_users }}"
 
 
 - hosts: app-server-1.127.0.0.1.nip.io
@@ -26,19 +17,17 @@
   roles:
     - role: vjk.nginx
       vars:
-        nginx_vhosts:
-          - listen: "80"
-            server_name:  "{{ ansible_hostname }}"
-            root: "/var/www/{{ ansible_hostname }}"
-            index: "index.html index.htm"
-            filename: "{{ ansible_hostname }}.conf"
+        nginx_vhosts: "{{ nginx_custom_vhosts }}"
+
+    # - role: vjk.php
+    #   vars:
+
+  
   tasks:
-    - name: Test nginx response
-      uri:
-        url: http://{{ ansible_hostname }}:80/
-        status_code: 200
-      register: response
-      until: response.status == 200
-      retries: 5
-      delay: 2
+    - name: Run common tasks
+      include_tasks: tasks/common.yaml
+
+    - name: Run post-install nginx tasks
+      include_tasks: tasks/post-install-nginx.yaml
+      
             
