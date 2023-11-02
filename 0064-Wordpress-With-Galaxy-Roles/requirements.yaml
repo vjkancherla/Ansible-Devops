@@ -14,4 +14,4 @@
 
         # from locally cloned git repository (git+file:// requires full paths)
         - name: vjk.php
-          src: git+file:///Users/vijaykancherla/Downloads/DevOps-Projects/TMP/ansible-role-php
+          src: https://github.com/vjkancherla/ansible-role-php
