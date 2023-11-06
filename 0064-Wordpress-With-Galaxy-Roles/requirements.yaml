@@ -1,12 +1,12 @@
 ---
     roles:
         # From Github, latest version.
-        - name: vjk.mysql
-          src: https://github.com/vjkancherla/ansible-role-mysql
-
-        # # from locally cloned git repository (git+file:// requires full paths)
         # - name: vjk.mysql
-        #   src: git+file:///Users/vijaykancherla/Downloads/DevOps-Projects/TMP/ansible-role-mysql
+        #   src: https://github.com/vjkancherla/ansible-role-mysql
+
+        # from locally cloned git repository (git+file:// requires full paths)
+        - name: vjk.mysql
+          src: git+file:///Users/vijaykancherla/Downloads/DevOps-Projects/TMP/ansible-role-mysql
 
         # From Github, latest version.
         - name: vjk.nginx

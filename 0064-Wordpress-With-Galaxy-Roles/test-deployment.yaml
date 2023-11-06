@@ -55,6 +55,7 @@ spec:
     name: my-ubuntu-ssh
     ports:
     - containerPort: 22
+    - containerPort: 3306
     resources: {}
     securityContext:
       privileged: true
@@ -111,9 +112,14 @@ metadata:
   name: db-svc-1
 spec:
   ports:
-  - port: 2422
+  - name: ssh-port
+    port: 2422
     protocol: TCP
     targetPort: 22
+  - name: mysql-port
+    port: 3306
+    protocol: TCP
+    targetPort: 3306
   selector:
     run: db-server-1
 status:
