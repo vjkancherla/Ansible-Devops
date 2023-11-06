@@ -5,8 +5,6 @@
   roles:
     - role: vjk.mysql
       vars:
-        mysql_name: mysql
-        mysql_service: mysql
         mysql_databases: "{{ _mysql_databases }}"
         mysql_users: "{{ _mysql_users }}"
 
