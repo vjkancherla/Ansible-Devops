@@ -13,39 +13,39 @@
       include_tasks: tasks/common.yaml
 
 
-# - hosts: app-server-1.127.0.0.1.nip.io
-#   become: yes
+- hosts: app-server-1.127.0.0.1.nip.io
+  become: yes
 
-#   roles:
-#     - role: vjk.nginx
-#       vars:
-#         nginx_vhosts: "{{ nginx_custom_vhosts }}"
-#   tasks:
-#     - name: Run common tasks
-#       include_tasks: tasks/common.yaml
+  roles:
+    - role: vjk.nginx
+      vars:
+        nginx_vhosts: "{{ nginx_custom_vhosts }}"
+  tasks:
+    - name: Run common tasks
+      include_tasks: tasks/common.yaml
 
-#     - name: Run post-install nginx tasks
-#       include_tasks: tasks/post-install-nginx.yaml
+    - name: Run post-install nginx tasks
+      include_tasks: tasks/post-install-nginx.yaml
 
 
-# - hosts: app-server-1.127.0.0.1.nip.io
-#   become: yes
+- hosts: app-server-1.127.0.0.1.nip.io
+  become: yes
   
-#   roles:
-#     - role: vjk.php
-#       vars:
-#         __php_webserver_daemon: nginx
-#         php_enable_php_fpm: true
-#         php_packages_extra:
-#           - php
-#           - php-fpm
-#           - php-enchant
-#           # - php-IDNA_Convert
-#           - php-mbstring
-#           - php-mysql
-#           # - php-PHPMailer
-#           # - php-process
-#           # - php-simplepie
-#           - php-xml
+  roles:
+    - role: vjk.php
+      vars:
+        __php_webserver_daemon: nginx
+        php_enable_php_fpm: true
+        php_packages_extra:
+          - php
+          - php-fpm
+          - php-enchant
+          # - php-IDNA_Convert
+          - php-mbstring
+          - php-mysql
+          # - php-PHPMailer
+          # - php-process
+          # - php-simplepie
+          - php-xml
       
             
