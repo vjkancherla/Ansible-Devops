@@ -1,0 +1,48 @@
+INSTALL ANSIBLE USING ASDF TOOL
+====================================
+
+ASDF
+======
+- Ensure ASDF tool is install in your machine:
+    https://asdf-vm.com/guide/getting-started.html
+
+
+
+######## THIS DOES NOT WORK ###########
+#asdf tries to install ansible before python and fails###
+## The installation happens in alphabetical order####
+INSTALL ANSIBLE USING .tool-versions FILE
+================================================
+>> git clone https://github.com/vjkancherla/Ansible-Devops.git
+
+>> cd Ansible-Devops
+
+>> asdf install
+Installs all the tools defined in the .tool-versions file
+
+>> ansible --version
+######## THIS DOES NOT WORK ###########
+
+
+
+INSTALL ANSIBLE WITHOUT USING .tool-versions FILE
+=====================================================
+>> asdf plugin add python
+
+>> asdf install python 3.9.18
+
+>> asdf global python 3.9.18
+
+>> python3 --version
+Note: might need to clost and restart the terminal
+
+>> asdf plugin add ansible https://github.com/vjkancherla/asdf-ansible-plugin
+
+>> asdf install ansible 8.6.1
+
+>> asdf global ansible 8.6.1
+
+>> ansible --version
+
+Note: might need to clost and restart the terminal
+
