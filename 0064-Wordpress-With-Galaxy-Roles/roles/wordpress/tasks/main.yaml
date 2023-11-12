@@ -1,0 +1,65 @@
+---
+- name: Install PHP-MySQL package
+  apt: 
+    name: php-mysql
+    state: present
+
+- name: Check if specified WordPress version is already present
+  stat: 
+    path: "/srv/wordpress-{{ wp_version }}.tar.gz"
+  register: wp_check
+
+- name: Download WordPress
+  get_url: 
+    url: "http://wordpress.org/wordpress-{{ wp_version }}.tar.gz"
+    dest: "/srv/wordpress-{{ wp_version }}.tar.gz"
+    # sha256sum: "{{ wp_sha256sum }}"
+  when: wp_check.stat.exists == false
+
+- name: Extract archive
+  ansible.builtin.unarchive:
+    src: "/srv/wordpress-{{ wp_version }}.tar.gz"
+    dest: /srv/
+    remote_src: yes
+    creates: /srv/wordpress
+  when: wp_check.stat.exists == false
+
+- name: Add group "wordpress"
+  ansible.builtin.group:
+    name: wordpress
+
+- name: Add user "wordpress"
+  ansible.builtin.user:
+    name: wordpress
+    group: wordpress
+    home: /srv/wordpress/
+
+- name: Fetch random salts for WordPress config
+  ansible.builtin.command: curl https://api.wordpress.org/secret-key/1.1/salt/
+  register: wp_salt
+  become: no
+  delegate_to: localhost
+
+- name: Copy WordPress config file
+  ansible.builtin.template:
+    src: wp-config.php.j2
+    dest: /srv/wordpress/wp-config.php
+
+- name: Change ownership of WordPress installation
+  ansible.builtin.file:
+    path: /srv/wordpress/
+    owner: wordpress
+    group: wordpress
+    state: directory
+    recurse: yes
+
+- name: Copy WordPress php-fpm configuration
+  ansible.builtin.template:
+    src: wp-php-fpm.conf 
+    dest: /etc/php/7.4/fpm/pool.d/wordpress.conf
+
+- name: Start php-fpm Service
+  ansible.builtin.shell: |
+    /etc/init.d/php7.4-fpm stop
+    sleep 1
+    /etc/init.d/php7.4-fpm start

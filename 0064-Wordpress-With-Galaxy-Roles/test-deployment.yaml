@@ -11,6 +11,7 @@ spec:
     name: my-ubuntu-ssh
     ports:
     - containerPort: 22
+    - containerPort: 80
     resources: {}
     securityContext:
       privileged: true
@@ -33,6 +34,7 @@ spec:
     name: my-ubuntu-ssh
     ports:
     - containerPort: 22
+    - containerPort: 80
     resources: {}
     securityContext:
       privileged: true
@@ -74,9 +76,14 @@ metadata:
   name: app-svc-1
 spec:
   ports:
-  - port: 2222
+  - name: ssh-port
+    port: 2422
     protocol: TCP
     targetPort: 22
+  - name: http-port
+    port: 80
+    protocol: TCP
+    targetPort: 80
   selector:
     run: app-server-1
 status:
@@ -93,9 +100,14 @@ metadata:
   name: app-svc-2
 spec:
   ports:
-  - port: 2322
+  - name: ssh-port
+    port: 2422
     protocol: TCP
     targetPort: 22
+  - name: http-port
+    port: 80
+    protocol: TCP
+    targetPort: 80
   selector:
     run: app-server-2
 status:

@@ -8,3 +8,8 @@ nginx_custom_vhosts:
     root: "{{ nginx_server_root }}"
     index: "index.html index.htm"
     filename: "{{ ansible_hostname }}.conf"
+  - listen: "80"
+    server_name:  "wordpress.127.0.0.1.nip.io"
+    root: "/srv/wordpress/"
+    index: "index.html index.htm"
+    filename: "wordpress.conf"
